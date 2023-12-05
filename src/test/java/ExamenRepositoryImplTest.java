@@ -24,7 +24,7 @@ class ExamenServiceImplTest {
     void setUp(){
         repository = mock(ExamenRepository.class);
         preguntasRepository = mock(PreguntasRepository.class);
-        ExamenService service = new ExamenServiceImpl(repository, preguntasRepository);
+        service = new ExamenServiceImpl(repository, preguntasRepository);
     }
 
     @Tag("Junit5")
@@ -54,9 +54,34 @@ class ExamenServiceImplTest {
         @Test
         void testPreguntaExamen(){
             when(repository.findAll()).thenReturn(Data.EXAMEN);
-            when(preguntasRepository.findPreguntasPorExamenID(5L)).thenReturn(Data.PREGUNTAS);
+            when(preguntasRepository.findPreguntasPorExamenID(anyLong())).thenReturn(Data.PREGUNTAS);
             Examen examen = service.findExamenPorNombreConPreguntas("Historia");
-            assertEquals(4,  examen.getPreguntas().size());
+            assertEquals(5,  examen.getPreguntas().size());
+            assertTrue(examen.getPreguntas().contains("Aritmetica"));
         }
+
+        @Test
+        void testPreguntaExamenVerify(){
+            when(repository.findAll()).thenReturn(Data.EXAMEN);
+            when(preguntasRepository.findPreguntasPorExamenID(anyLong())).thenReturn(Data.PREGUNTAS);
+            Examen examen = service.findExamenPorNombreConPreguntas("Historia");
+            assertEquals(5,  examen.getPreguntas().size());
+            assertTrue(examen.getPreguntas().contains("Aritmetica"));
+            // En este caso el . va fuera de los parentesis.
+            verify(repository).findAll();
+            verify(preguntasRepository).findPreguntasPorExamenID(anyLong());
+        }
+
+        @Test
+        void testNoExisteExamenVerify(){
+            when(repository.findAll()).thenReturn(Data.EXAMEN);
+            when(preguntasRepository.findPreguntasPorExamenID(anyLong())).thenReturn(Data.PREGUNTAS);
+            Examen examen = service.findExamenPorNombreConPreguntas("Historia2");
+            assertNull(examen);
+            // En este caso el . va fuera de los parentesis.
+            verify(repository).findAll();
+            verify(preguntasRepository).findPreguntasPorExamenID(anyLong());
+        }
+
     }
 }
