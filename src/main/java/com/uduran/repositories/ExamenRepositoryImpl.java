@@ -5,9 +5,18 @@ import com.uduran.models.Examen;
 import java.util.Arrays;
 import java.util.List;
 
-public class ExamenRepositoryImpl implements ExamenRepositorio {
+public class ExamenRepositoryImpl implements ExamenRepository{
+    @Override
+    public Examen guardar(Examen examen) {
+        return null;
+    }
+
     @Override
     public List<Examen> findAll() {
-        return Arrays.asList(new Examen(5L, "Matematicas"), new Examen(6L, "Lenguaje"), new Examen(7L, "Historia"));
+        return Arrays.asList(new Examen(1L, "Historia"),
+                new Examen(2L, "Matemáticas"),
+                new Examen(3L, "Lenguaje"),
+                new Examen(4L, "Filosofía"),
+                new Examen(5L, "Tecnología"));
     }
 }
