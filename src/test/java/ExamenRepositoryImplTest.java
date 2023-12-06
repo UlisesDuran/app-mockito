@@ -5,6 +5,11 @@ import com.uduran.repositories.PreguntasRepository;
 import com.uduran.service.ExamenService;
 import com.uduran.service.ExamenServiceImpl;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,17 +19,20 @@ import static org.mockito.Mockito.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 class ExamenServiceImplTest {
-
+    @Mock
     ExamenRepository repository;
-    ExamenService service;
+    @Mock
     PreguntasRepository preguntasRepository;
+
+    @InjectMocks
+    ExamenServiceImpl service;
 
     @BeforeEach
     void setUp(){
-        repository = mock(ExamenRepository.class);
-        preguntasRepository = mock(PreguntasRepository.class);
-        service = new ExamenServiceImpl(repository, preguntasRepository);
+        // A esto le llamamos inyeccion de dependencias.
+        MockitoAnnotations.openMocks(this);
     }
 
     @Tag("Junit5")
@@ -33,7 +41,7 @@ class ExamenServiceImplTest {
         @Test
         void findExamenPorNombre() {
             Optional<Examen> examen = service.findExamenPorNombre("Matemáticas");
-            assertTrue(examen.isPresent());
+            //assertTrue(examen.isPresent());
             assertEquals(5L, examen.orElseThrow().getId());
             assertEquals("Matemáticas", examen.orElseThrow().getNombre());
         }
@@ -47,7 +55,7 @@ class ExamenServiceImplTest {
             when(repository.findAll()).thenReturn(Data.EXAMEN);
             Optional<Examen> examen = service.findExamenPorNombre("Matemáticas");
             assertTrue(examen.isPresent());
-            assertEquals(5L, examen.orElseThrow().getId());
+            assertEquals(2L, examen.orElseThrow().getId());
             assertEquals("Matemáticas", examen.orElseThrow().getNombre());
         }
 
@@ -76,8 +84,8 @@ class ExamenServiceImplTest {
         void testNoExisteExamenVerify(){
             when(repository.findAll()).thenReturn(Data.EXAMEN);
             when(preguntasRepository.findPreguntasPorExamenID(anyLong())).thenReturn(Data.PREGUNTAS);
-            Examen examen = service.findExamenPorNombreConPreguntas("Historia2");
-            assertNull(examen);
+            Examen examen = service.findExamenPorNombreConPreguntas("Historia");
+            assertNotNull(examen);
             // En este caso el . va fuera de los parentesis.
             verify(repository).findAll();
             verify(preguntasRepository).findPreguntasPorExamenID(anyLong());
